@@ -1,7 +1,6 @@
 const { SystemDependency } = require("sistema");
 
 const app = require("./app");
-const database = require("./database");
 const fast = require("./controllers/fast");
 const slow = require("./controllers/slow");
 
