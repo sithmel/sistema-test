@@ -1,18 +1,22 @@
 const server = require("./server");
 const events = { SIGTERM: 0, SIGINT: 0, unhandledRejection: 1, error: 1 };
-const { systemRunner, requestRunner } = require("./runners");
+const { systemContext, requestContext } = require("./context");
+
+const database = require("./database");
+const { run } = require("sistema");
 
 async function start() {
-  await systemRunner.run(server);
+  // await server.run({}, systemContext);
+  await run([server, database], {}, systemContext);
 
   console.log("System has started. Press CTRL+C to stop");
 
   Object.keys(events).forEach((name) => {
     process.on(name, async () => {
-      await systemRunner.shutdown();
-      console.log("systemrunner has stopped");
-      await requestRunner.shutdown();
-      console.log("requestrunner has stopped");
+      await systemContext.shutdown();
+      console.log("systemContext has stopped");
+      await requestContext.shutdown();
+      console.log("requestContext has stopped");
       process.exit(events[name]);
     });
   });

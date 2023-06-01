@@ -1,23 +1,11 @@
-const delay = require("./delay");
+const { SystemDependency } = require("sistema");
+
 const app = require("./app");
 const database = require("./database");
-const { requestRunner } = require("./runners");
+const fast = require("./controllers/fast");
+const slow = require("./controllers/slow");
 
-const { SystemDependency, Dependency } = require("sistema");
-
-const fast = new Dependency("fast")
-  .dependsOn(database, "req", "res")
-  .provides(async (db, req, res) => {
-    await delay(10);
-    res.send("fast endpoint");
-  });
-
-const slow = new Dependency("slow")
-  .dependsOn(database, "req", "res")
-  .provides(async (db, req, res) => {
-    await delay(3000);
-    res.send("slow endpoint");
-  });
+const { requestContext } = require("./context");
 
 module.exports = new SystemDependency("controllers")
   .dependsOn(app)
@@ -25,11 +13,11 @@ module.exports = new SystemDependency("controllers")
     console.log("start controller");
 
     app.get("/fast", async (req, res) => {
-      requestRunner.run(fast, { req, res });
+      fast.run({ req, res }, requestContext);
     });
 
     app.get("/slow", async (req, res) => {
-      requestRunner.run(slow, { req, res });
+      slow.run({ req, res }, requestContext);
     });
     return app;
   });
