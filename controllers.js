@@ -9,8 +9,6 @@ const { requestContext } = require("./context");
 module.exports = new SystemDependency("controllers")
   .dependsOn(app)
   .provides((app) => {
-    console.log("start controller");
-
     app.get("/fast", async (req, res) => {
       fast.run({ req, res }, requestContext);
     });
