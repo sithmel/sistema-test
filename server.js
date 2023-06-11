@@ -1,15 +1,15 @@
-const { SystemDependency } = require("sistema");
+const { ResourceDependency } = require("sistema");
 const controllers = require("./controllers");
 const app = require("./app");
 let server;
 
-module.exports = new SystemDependency("server")
-  .dependsOn(controllers, app)
-  .provides((_ctrl, app) => {
+module.exports = new ResourceDependency("server")
+  .dependsOn(app, controllers)
+  .provides((app, _ctrl) => {
     server = app.listen(3000);
     return server;
   })
-  .dispose(() => {
+  .disposes(() => {
     return new Promise((res) => {
       server.close(res);
     });

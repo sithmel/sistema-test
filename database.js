@@ -1,10 +1,10 @@
 const delay = require("./delay");
-const { SystemDependency } = require("sistema");
+const { ResourceDependency } = require("sistema");
 
-module.exports = new SystemDependency("database")
+module.exports = new ResourceDependency("database")
   .provides(async () => {
     await delay(1000);
   })
-  .dispose(async () => {
+  .disposes(async () => {
     await delay(1000);
   });
