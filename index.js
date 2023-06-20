@@ -13,7 +13,7 @@ async function start() {
   console.log("System has started. Press CTRL+C to stop");
 
   Object.keys(events).forEach((name) => {
-    process.on(name, async () => {
+    process.on(name, async (events) => {
       await systemContext.shutdown();
       console.log("systemContext has stopped");
       await requestContext.shutdown();
