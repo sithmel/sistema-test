@@ -16,6 +16,6 @@
     "node-fetch": "^3.3.1"
   },
   "devDependencies": {
-    "sistema": "^0.0.3"
+    "sistema": "^0.0.4"
   }
 }

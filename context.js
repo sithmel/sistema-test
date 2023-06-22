@@ -1,66 +1,85 @@
-const { performance } = require("perf_hooks");
-
-const { Context } = require("sistema");
+const { Context, CONTEXT_EVENTS } = require("sistema");
 
 const systemContext = new Context("System context")
-  .onSuccessRun((dep, ctx, opts) => {
-    // example: 'User query run by main context in 14 ms'
-    console.log(
-      `${dep.name} run by ${ctx.name} in ${
-        performance.now() - opts.startedOn
-      } ms`
-    );
-  })
-  .onFailRun((dep, ctx, opts) => {
-    console.log(
-      `${dep.name} run with Error (${opts.error.message}) by ${ctx.name} in ${
-        performance.now() - opts.startedOn
-      } ms`
-    );
-  })
-  .onSuccessShutdown((dep, ctx, opts) => {
-    console.log(
-      `${dep.name} shutdown by ${ctx.name} in ${
-        performance.now() - opts.startedOn
-      } ms`
-    );
-  })
-  .onFailShutdown((dep, ctx, opts) => {
-    console.log(
-      `${dep.name} shutdown with Error (${opts.error.message}) by ${
-        ctx.name
-      } in ${performance.now() - opts.startedOn} ms`
-    );
-  });
+  .on(
+    CONTEXT_EVENTS.SUCCESS_RUN,
+    ({ dependency, context, timeStart, timeEnd }) => {
+      // example: 'User query run by main context in 14 ms'
+      console.log(
+        `${dependency.name} run by ${context.name} in ${timeEnd - timeStart} ms`
+      );
+    }
+  )
+  .on(
+    CONTEXT_EVENTS.FAIL_RUN,
+    ({ dependency, context, timeStart, timeEnd, error }) => {
+      console.log(
+        `${dependency.name} run with Error (${error.message}) by ${
+          context.name
+        } in ${timeEnd - timeStart} ms`
+      );
+    }
+  )
+  .on(
+    CONTEXT_EVENTS.SUCCESS_SHUTDOWN,
+    ({ dependency, context, timeStart, timeEnd }) => {
+      console.log(
+        `${dependency.name} shutdown by ${context.name} in ${
+          timeEnd - timeStart
+        } ms`
+      );
+    }
+  )
+  .on(
+    CONTEXT_EVENTS.FAIL_SHUTDOWN,
+    ({ dependency, context, timeStart, timeEnd, error }) => {
+      console.log(
+        `${dependency.name} shutdown with Error (${error.message}) by ${
+          context.name
+        } in ${timeEnd - timeStart} ms`
+      );
+    }
+  );
 
 const requestContext = new Context("Request context")
-  .onSuccessRun((dep, ctx, opts) => {
-    // example: 'User query run by main context in 14 ms'
-    console.log(
-      `${dep.name} run by ${ctx.name} in ${
-        performance.now() - opts.startedOn
-      }ms`
-    );
-  })
-  .onFailRun((dep, ctx, opts) => {
-    console.log(
-      `${dep.name} run with Error (${opts.error.message}) by ${ctx.name} in ${
-        performance.now() - opts.startedOn
-      } ms`
-    );
-  })
-  .onSuccessShutdown((dep, ctx, opts) => {
-    console.log(
-      `${dep.name} shutdown by ${ctx.name} in ${
-        performance.now() - opts.startedOn
-      } ms`
-    );
-  })
-  .onFailShutdown((dep, ctx, opts) => {
-    console.log(
-      `${dep.name} shutdown with Error (${opts.error.message}) by ${
-        ctx.name
-      } in ${(performance.now() - opts.startedOn) / 1000}ms`
-    );
-  });
+  .on(
+    CONTEXT_EVENTS.SUCCESS_RUN,
+    ({ dependency, context, timeStart, timeEnd }) => {
+      // example: 'User query run by main context in 14 ms'
+      console.log(
+        `${dependency.name} run by ${context.name} in ${timeEnd - timeStart} ms`
+      );
+    }
+  )
+  .on(
+    CONTEXT_EVENTS.FAIL_RUN,
+    ({ dependency, context, timeStart, timeEnd, error }) => {
+      console.log(
+        `${dependency.name} run with Error (${opts.error.message}) by ${
+          context.name
+        } in ${timeEnd - timeStart} ms`
+      );
+    }
+  )
+  .on(
+    CONTEXT_EVENTS.SUCCESS_SHUTDOWN,
+    ({ dependency, context, timeStart, timeEnd }) => {
+      console.log(
+        `${dependency.name} shutdown by ${context.name} in ${
+          timeEnd - timeStart
+        } ms`
+      );
+    }
+  )
+  .on(
+    CONTEXT_EVENTS.FAIL_SHUTDOWN,
+    ({ dependency, context, timeStart, timeEnd, error }) => {
+      console.log(
+        `${dependency.name} shutdown with Error (${error.message}) by ${
+          context.name
+        } in ${timeEnd - timeStart} ms`
+      );
+    }
+  );
+
 module.exports = { systemContext, requestContext };
