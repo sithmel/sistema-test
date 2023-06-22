@@ -4,10 +4,10 @@ const delay = require("../delay");
 const database = require("../database");
 
 const fast = new Dependency("fast")
-  .dependsOn(database, "req", "res")
-  .provides(async (db, req, res) => {
+  .dependsOn(database, "req")
+  .provides(async (db, req) => {
     await delay(10);
-    res.send("fast endpoint");
+    return "fast endpoint";
   });
 
 module.exports = fast;

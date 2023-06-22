@@ -4,10 +4,10 @@ const delay = require("../delay");
 const database = require("../database");
 
 const slow = new Dependency("slow")
-  .dependsOn(database, "req", "res")
-  .provides(async (db, req, res) => {
+  .dependsOn(database, "req")
+  .provides(async (db, req) => {
     await delay(3000);
-    res.send("slow endpoint");
+    return "slow endpoint";
   });
 
 module.exports = slow;
