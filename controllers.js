@@ -1,5 +1,5 @@
-const { ResourceDependency, run, DEPENDENCY_TIMINGS } = require("sistema");
-
+const { ResourceDependency, run, META_DEPENDENCY } = require("sistema");
+const lens = require("sistema-lens");
 const app = require("./app");
 const fast = require("./controllers/fast");
 const slow = require("./controllers/slow");
@@ -16,12 +16,23 @@ function writeServerTiming(timings, res) {
   res.set("Server-Timing", timingsString);
 }
 
+function lensMiddleware(dependency) {
+  return (req, res, next) => {
+    if (req.query.debug === "true") {
+      return res.send(
+        lens(dependency.getAdjacencyList(), new Map([]), { title: "debug" })
+      );
+    }
+    next();
+  };
+}
+
 module.exports = new ResourceDependency("controllers")
   .dependsOn(app)
   .provides((application) => {
-    application.get("/fast", async (req, res) => {
-      const [text, timings] = await run(
-        [fast, DEPENDENCY_TIMINGS],
+    application.get("/fast", lensMiddleware(fast), async (req, res) => {
+      const [text, { timings }] = await run(
+        [fast, META_DEPENDENCY],
         { req, res },
         requestContext
       );
@@ -29,9 +40,9 @@ module.exports = new ResourceDependency("controllers")
       res.send(text);
     });
 
-    application.get("/slow", async (req, res) => {
-      const [text, timings] = await run(
-        [slow, DEPENDENCY_TIMINGS],
+    application.get("/slow", lensMiddleware(slow), async (req, res) => {
+      const [text, { timings }] = await run(
+        [slow, META_DEPENDENCY],
         { req, res },
         requestContext
       );

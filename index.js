@@ -7,6 +7,9 @@ const database = require("./database");
 
 async function start() {
   await server.run({}, systemContext);
+  // you can run some dependency in the systemContext if you prefer
+  // they start during the startup, instead than when needed
+
   // await database.run({}, systemContext);
   // await run([server, database], {}, systemContext);
 
