@@ -4,8 +4,6 @@ const app = require("./app");
 const fast = require("./controllers/fast");
 const slow = require("./controllers/slow");
 
-const { requestContext } = require("./context");
-
 function writeServerTiming(timings, res) {
   const timingsString = timings
     .map(
@@ -31,21 +29,19 @@ module.exports = new ResourceDependency("controllers")
   .dependsOn(app)
   .provides((application) => {
     application.get("/fast", lensMiddleware(fast), async (req, res) => {
-      const [text, { timings }] = await run(
-        [fast, META_DEPENDENCY],
-        { req, res },
-        requestContext
-      );
+      const [text, { timings }] = await run([fast, META_DEPENDENCY], {
+        req,
+        res,
+      });
       writeServerTiming(timings, res);
       res.send(text);
     });
 
     application.get("/slow", lensMiddleware(slow), async (req, res) => {
-      const [text, { timings }] = await run(
-        [slow, META_DEPENDENCY],
-        { req, res },
-        requestContext
-      );
+      const [text, { timings }] = await run([slow, META_DEPENDENCY], {
+        req,
+        res,
+      });
       writeServerTiming(timings, res);
       res.send(text);
     });

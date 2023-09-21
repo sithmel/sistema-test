@@ -1,4 +1,4 @@
-const { Context, CONTEXT_EVENTS } = require("sistema");
+const { defaultContext, Context, CONTEXT_EVENTS } = require("sistema");
 
 const systemContext = new Context("System context")
   .on(
@@ -41,7 +41,7 @@ const systemContext = new Context("System context")
     }
   );
 
-const requestContext = new Context("Request context")
+defaultContext
   .on(
     CONTEXT_EVENTS.SUCCESS_RUN,
     ({ dependency, context, timeStart, timeEnd }) => {
@@ -82,4 +82,4 @@ const requestContext = new Context("Request context")
     }
   );
 
-module.exports = { systemContext, requestContext };
+module.exports = { systemContext };
